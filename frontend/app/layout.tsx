@@ -27,9 +27,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get("access_token"); // Ganti has() dengan get()
-  const isLoggedIn = !!accessToken; // Cek keberadaan token
+  // Perbaikan utama: tambahkan await dan gunakan getAll()
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+  const isLoggedIn = allCookies.some(cookie => cookie.name === "access_token");
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
