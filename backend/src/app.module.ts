@@ -1,5 +1,3 @@
-// src/app.module.ts
-
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,16 +16,40 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST'),
-        port: parseInt(config.get<string>('DB_PORT', '5432')),
-        username: config.get<string>('DB_USER'),
-        password: config.get<string>('DB_PASS'),
-        database: config.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true, // ⚠️ ubah jadi false di production nanti
-      }),
+      useFactory: (config: ConfigService) => {
+        // Gunakan DATABASE_URL jika ada (untuk Railway)
+        const databaseUrl = config.get<string>('DATABASE_URL');
+        
+        if (databaseUrl) {
+          // Konfigurasi untuk Railway
+          return {
+            type: 'postgres',
+            url: databaseUrl,
+            autoLoadEntities: true,
+            synchronize: true, // false di production
+            ssl: {
+              rejectUnauthorized: false // Diperlukan untuk Railway
+            },
+            extra: {
+              ssl: {
+                rejectUnauthorized: false
+              }
+            }
+          };
+        }
+
+        // Konfigurasi untuk development lokal
+        return {
+          type: 'postgres',
+          host: config.get<string>('DB_HOST'),
+          port: parseInt(config.get<string>('DB_PORT', '5432')),
+          username: config.get<string>('DB_USER'),
+          password: config.get<string>('DB_PASS'),
+          database: config.get<string>('DB_NAME'),
+          autoLoadEntities: true,
+          synchronize: config.get<string>('NODE_ENV') !== 'production',
+        };
+      },
       inject: [ConfigService],
     }),
 
