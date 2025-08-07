@@ -11,18 +11,24 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
         @Body('email') email: string,
         @Body('password') password: string,
-    ){
-        //return this.authService.login(email, password);
+    ) {
         const data = await this.authService.login(email, password);
-
+        
+        // Perbaikan cookie settings untuk production
         res.cookie('access_token', data.access_token, {
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === 'production', // true di production
             maxAge: 1000 * 60 * 60,
-            sameSite: 'lax',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             path: '/',
-        })
-        return { user: data.user };
+            domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
+        });
+
+        // Pastikan mengembalikan token juga di response body
+        return { 
+            user: data.user,
+            access_token: data.access_token // Tambahkan ini untuk Postman/API clients
+        };
     }
 
     @Get('me')
