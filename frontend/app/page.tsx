@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default function HomePage(){
-  const cookieStore = cookies();
-  const token = cookieStore.get('access_token');
+export default async function HomePage() {
+  const cookieStore = cookies(); // ⛔️ TANPA AWAIT
+  const token = cookieStore.get("access_token");
 
-  if(!token){
-    redirect('/login');
+  if (!token) {
+    redirect("/login");
   }
 
-  redirect('/home');
+  redirect("/home");
 }
