@@ -20,6 +20,9 @@ out
 frontend/.next
 frontend/node_modules
 frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
 
 # ===================================================
 # NestJS (Backend)
@@ -27,6 +30,8 @@ dist
 backend/dist
 backend/node_modules
 backend/.env
+backend/.env.development
+backend/.env.production
 
 # ===================================================
 # Production / Build
@@ -36,7 +41,7 @@ build
 # Env files (semua .env)
 .env
 .env.*
-!*.example
+!*.example   # tapi tetap boleh commit file contoh env
 
 # ===================================================
 # Misc
@@ -51,8 +56,9 @@ yarn-error.log*
 pnpm-debug.log*
 
 # ===================================================
-# Vercel
+# Vercel / Render
 .vercel
+.render
 
 # ===================================================
 # TypeScript
