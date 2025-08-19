@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 
 // Ini boleh async atau tidak, bebas, YANG PENTING: cookies() TIDAK DI-AWAIT
 export default async function HomePage() {
-  const token = cookies().get("access_token");
+  // const token = cookies().get("access_token");
+  const cookieStore = await cookies(); // <-- kasih await
+  const token = cookieStore.get("access_token");
 
   if (!token) {
     redirect("/login");
