@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 
 export default async function HomePage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies(); // ✅ pakai await
   const token = cookieStore.get("access_token");
+  
 
   if (!token) {
     return <div>Unauthorized</div>;
