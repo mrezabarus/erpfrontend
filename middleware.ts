@@ -1,19 +1,24 @@
+// middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: NextRequest){
-    const token = request.cookies.get('access_token');
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("access_token");
 
-    if(!token){
-        return NextResponse.redirect(new URL('/login', request.url));
-    }
+  // kalau belum login → redirect ke /login
+  if (!token && !request.nextUrl.pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
-    return NextResponse.next();
+  // kalau sudah login dan coba buka /login → lempar ke /home
+  if (token && request.nextUrl.pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
+
+  return NextResponse.next();
 }
 
-// export const config = {
-//     matcher: ['/project/:path*'],
-// };
-
 export const config = {
-    matcher: ['/((?!login|register|_next|favicon.ico).*)'], // proteksi semua kecuali login & register
+  matcher: [
+    "/((?!_next|favicon.ico|register|public).*)", 
+  ],
 };
