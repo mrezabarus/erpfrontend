@@ -11,7 +11,7 @@ export async function login(email: string, password: string){
         body: JSON.stringify({email, password}),
     });
 
-    console.log('Login response status:', res.status); // 🔍 Tambahkan ini
+    //console.log('Login response status:', res.status); // 🔍 Tambahkan ini
 
     if(!res.ok) throw new Error('Gagal Login');
     return res.json();
@@ -37,6 +37,7 @@ export async function logout() {
 
 export async function getMe(){
     const res = await customFetch(`${API_BASE_URL}/auth/me`);
+    if (!res.ok) throw new Error("Gagal mengambil data");
     return res.json();
 };
 
